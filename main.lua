@@ -78,7 +78,7 @@ function f:COMBAT_LOG_EVENT_UNFILTERED(...)
   if critical and sourceGUID == playerGUID then
     local currentTime = time()
     if (lastCritTime + self.options.debounce <= currentTime and self.options.playsSound) then
-      PlaySoundFile("Interface\\AddOns\\WowICrit\\sounds\\"..tostring(math.random(1,17))..".mp3","master")
+      PlaySoundFile("Interface\\AddOns\\CritWow\\sounds\\"..tostring(math.random(1,17))..".mp3","master")
       lastCritTime = currentTime
     end
   end

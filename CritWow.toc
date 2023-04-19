@@ -1,6 +1,7 @@
 ## Interface: 30401
 ## Title: CritWow
 ## Author: IronSinew
-## Version: 1.0.2
+## Version: 1.0.3
+## SavedVariables: CritWowDB
 
 main.lua

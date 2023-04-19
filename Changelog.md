@@ -1,4 +1,7 @@
-#### 1.0.3
+#### 1.1.2
+* Add custom changelog
+
+#### 1.1.1
 * Add Play test sound button
 * Allow for variable saving of settings
 

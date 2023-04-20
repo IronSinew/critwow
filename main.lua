@@ -5,6 +5,10 @@ local debounceFactor = 10
 
 CritWow = {
     modes = {
+        random = {
+            id = "random",
+            name = "Random"
+        },
         wowenWilson = {
             id = "wowenWilson",
             name = "Wowen Wilson",
@@ -14,7 +18,7 @@ CritWow = {
         dnc = {
             id = "dnc",
             name = "DNC",
-            dncChance = 92,
+            dncChance = 83,
             soundPath = "Interface\\AddOns\\CritWow\\sounds\\dnc\\"
         },
         mj = {
@@ -31,12 +35,28 @@ CritWow = {
     }
 }
 
+-- used for random mode
+local modeIds = {}
+local modeCount = 0
+for _, val in pairs(CritWow.modes) do
+    if val.id ~= "random" then
+        table.insert(modeIds, val.id)
+        modeCount = modeCount + 1
+    end
+end
+
 function CritWow:PlaySound()
     local path = self.modes.wowenWilson.soundPath
     local fileName = ""
     local soundMode = CritWowDB.mode
 
-    if soundMmode == self.modes.dnc.id then
+    -- if random mode, select a random non-random mode to play a sound for
+    if soundMode == self.modes.random.id then
+        local rng = modeIds[math.random(1, modeCount)]
+        soundMode = self.modes[rng].id
+    end
+
+    if soundMode == self.modes.dnc.id then
         path = self.modes.dnc.soundPath
 
         if math.random(1, 100) <= self.modes.dnc.dncChance then

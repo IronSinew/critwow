@@ -1,3 +1,7 @@
+#### 1.2.2
+* Add Random mode
+* Increase Random DNC sound potential
+
 #### 1.2.1
 * Add EmJay mode
 

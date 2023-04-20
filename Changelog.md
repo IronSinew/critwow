@@ -1,3 +1,6 @@
+#### 1.2.1
+* Add EmJay mode
+
 #### 1.2.0
 * Add DNC mode and supporting clips
 * Allow toggling between Wowen Wilson and DNC modes

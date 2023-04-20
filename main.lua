@@ -1,5 +1,7 @@
 local playerGUID = UnitGUID("player")
 local lastCritTime = time()
+local debounceMax = 5
+local debounceFactor = 10
 
 CritWow = {
     modes = {
@@ -14,6 +16,12 @@ CritWow = {
             name = "DNC",
             dncChance = 92,
             soundPath = "Interface\\AddOns\\CritWow\\sounds\\dnc\\"
+        },
+        mj = {
+            id = "mj",
+            name = "EmJay",
+            count = 14,
+            soundPath = "Interface\\AddOns\\CritWow\\sounds\\mj\\"
         }
     },
     defaults = {
@@ -26,8 +34,9 @@ CritWow = {
 function CritWow:PlaySound()
     local path = self.modes.wowenWilson.soundPath
     local fileName = ""
+    local soundMode = CritWowDB.mode
 
-    if CritWowDB.mode == "dnc" then
+    if soundMmode == self.modes.dnc.id then
         path = self.modes.dnc.soundPath
 
         if math.random(1, 100) <= self.modes.dnc.dncChance then
@@ -35,6 +44,10 @@ function CritWow:PlaySound()
         else
             fileName = "igc.mp3"
         end
+    elseif soundMode == self.modes.mj.id then
+        path = self.modes.mj.soundPath
+
+        fileName = tostring(math.random(1, self.modes.mj.count)) .. ".mp3"
     else
         fileName = tostring(math.random(1, self.modes.wowenWilson.count)) .. ".mp3"
     end
@@ -48,7 +61,7 @@ function CritWow:SetDebounceSliderText()
         debounceTitle = "Once per " .. self.db.debounce .. "s"
     end
 
-    getglobal("CritWowDebounceSpeedSlider").Text:SetText("Wows: " .. debounceTitle);
+    getglobal("CritWowDebounceSpeedSlider").Text:SetText("Clips: " .. debounceTitle);
 end
 
 local f = CreateFrame("Frame")
@@ -97,17 +110,17 @@ function f:InitializeOptions()
     -- Debounce slider
     local debounceSlider = CreateFrame("Slider", "CritWowDebounceSpeedSlider", self.panel, "OptionsSliderTemplate")
     debounceSlider:SetPoint("TOPLEFT", 20, -70)
-    debounceSlider:SetMinMaxValues(0, 30)
-    debounceSlider:SetValueStep(2)
+    debounceSlider:SetMinMaxValues(0, debounceMax * debounceFactor)
+    debounceSlider:SetValueStep(debounceFactor / 5)
     debounceSlider:SetObeyStepOnDrag(true)
-    debounceSlider:SetValue(CritWowDB.debounce * 10)
+    debounceSlider:SetValue(CritWowDB.debounce * debounceFactor)
     getglobal(debounceSlider:GetName() .. "Low"):SetText("Unl");
-    getglobal(debounceSlider:GetName() .. "High"):SetText("Every 3");
+    getglobal(debounceSlider:GetName() .. "High"):SetText(debounceMax);
 
     CritWow:SetDebounceSliderText()
-    debounceSlider.tooltipText = "Speed of Wows"
+    debounceSlider.tooltipText = "Frequency of Sounds"
     debounceSlider:HookScript("OnValueChanged", function(_)
-        CritWowDB.debounce = _:GetValue() / 10
+        CritWowDB.debounce = _:GetValue() / debounceFactor
 
         CritWow:SetDebounceSliderText()
     end)
@@ -130,17 +143,14 @@ function f:InitializeOptions()
 
     UIDropDownMenu_Initialize(dropDown, function(self, level, menuList)
         local selectOption = UIDropDownMenu_CreateInfo()
-        selectOption.text = CritWow.modes.wowenWilson.name
-        selectOption.arg1 = CritWow.modes.wowenWilson.id
-        selectOption.checked = CritWowDB.mode == CritWow.modes.wowenWilson.id
         selectOption.func = self.SetValue
-        UIDropDownMenu_AddButton(selectOption)
 
-        selectOption.text = CritWow.modes.dnc.name
-        selectOption.arg1 = CritWow.modes.dnc.id
-        selectOption.checked = CritWowDB.mode == CritWow.modes.dnc.id
-        UIDropDownMenu_AddButton(selectOption)
-
+        for _, val in pairs(CritWow.modes) do
+            selectOption.text = val.name
+            selectOption.arg1 = val.id
+            selectOption.checked = CritWowDB.mode == val.id
+            UIDropDownMenu_AddButton(selectOption)
+        end
     end)
 
     function dropDown:SetValue(newValue)

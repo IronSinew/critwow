@@ -1,3 +1,7 @@
+#### 1.2.0
+* Add DNC mode and supporting clips
+* Allow toggling between Wowen Wilson and DNC modes
+
 #### 1.1.2
 * Add custom changelog
 
